@@ -4,61 +4,152 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kodo — Security-first AI Agent Framework</title>
-  <meta name="description" content="An open-source, security-first AI agent framework with capability-based permissions and sandboxed execution.">
+  <meta name="description" content="An open-source, security-first AI agent framework. Runs locally. Your data stays yours.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="scanlines"></div>
 
-  <main>
-    <div class="hero">
-      <h1 class="logo" data-text="Kodo">
-        <span class="japanese">鼓動</span>
-        <span class="english">Kodo</span>
-      </h1>
+  <!-- CRT overlay effects -->
+  <div class="crt-overlay"></div>
+  <div class="vignette"></div>
 
-      <p class="tagline">Security-first AI agent framework</p>
+  <!-- Animated background grid -->
+  <canvas id="grid-bg"></canvas>
 
-      <p class="description">
-        Open source. Runs locally. Your data stays yours.<br>
-        Capability-based permissions. Sandboxed skills. No compromises.
+  <div class="page-content">
+
+    <!-- Nav -->
+    <nav>
+      <div class="nav-left">
+        <span class="nav-logo">KD</span>
+        <span class="nav-separator">//</span>
+        <span class="nav-status"><span class="status-dot"></span> ACTIVE</span>
+      </div>
+      <div class="nav-right">
+        <a href="https://github.com/apiguy/kodo" class="nav-link">GitHub</a>
+        <a href="https://github.com/apiguy/kodo/blob/main/ARCHITECTURE.md" class="nav-link">Docs</a>
+        <a href="https://github.com/apiguy/kodo#quick-start" class="nav-link nav-link-accent">Get Started</a>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        open source &middot; security first &middot; runs locally
+      </div>
+
+      <div class="glitch-container" id="glitch-container">
+        <div class="glitch-text" id="glitch-main" aria-label="Kodo">鼓動</div>
+        <div class="glitch-text glitch-layer glitch-r" aria-hidden="true">鼓動</div>
+        <div class="glitch-text glitch-layer glitch-g" aria-hidden="true">鼓動</div>
+        <div class="glitch-text glitch-layer glitch-b" aria-hidden="true">鼓動</div>
+      </div>
+
+      <p class="hero-sub">
+        <span class="hero-sub-line" id="typed-line">Security-first AI agent framework</span>
+        <span class="cursor">_</span>
       </p>
 
-      <div class="cta">
-        <a href="https://github.com/apiguy/kodo" class="btn btn-primary">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-          </svg>
+      <p class="hero-desc">
+        An open-source agent that runs on your hardware, communicates through
+        your messaging platforms, and keeps your data under your control.
+      </p>
+
+      <div class="hero-actions">
+        <a href="https://github.com/apiguy/kodo" class="btn-main">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
           View on GitHub
         </a>
-        <a href="https://github.com/apiguy/kodo#quick-start" class="btn btn-secondary">Get Started</a>
+        <a href="https://github.com/apiguy/kodo#quick-start" class="btn-ghost">
+          $ gem install kodo-bot
+        </a>
       </div>
-    </div>
+    </section>
 
-    <div class="features">
-      <div class="feature">
-        <div class="feature-icon">&#x1F493;</div>
+    <!-- Features -->
+    <section class="features">
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-index">01</span>
+          <div class="feature-line"></div>
+        </div>
         <h3>Heartbeat Loop</h3>
-        <p>Proactive agent behavior, not just a chatbot. Runs continuously, notices things, takes action.</p>
+        <p>Not a chatbot. A continuous agent loop that pulses on interval — checking messages, running tasks, taking autonomous action even when idle.</p>
       </div>
-      <div class="feature">
-        <div class="feature-icon">&#x1F512;</div>
-        <h3>Security Gate</h3>
-        <p>Capability-based permissions. Skills declare what they need, you grant scoped access.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">&#x1F4AC;</div>
-        <h3>Multi-Channel</h3>
-        <p>Telegram, CLI, and more. One agent, all your messaging platforms.</p>
-      </div>
-    </div>
-  </main>
 
-  <footer>
-    <p>&copy; 2025 Freedom Dumlao. MIT License.</p>
-  </footer>
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-index">02</span>
+          <div class="feature-line"></div>
+        </div>
+        <h3>Security Gate</h3>
+        <p>Capability-based permissions enforced by a Rust security layer. Skills declare what they need. You grant scoped access. Nothing more.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-index">03</span>
+          <div class="feature-line"></div>
+        </div>
+        <h3>Multi-Provider LLM</h3>
+        <p>Claude, GPT, Gemini, Ollama, and 10+ more through RubyLLM. Switch models with one line of config. No vendor lock-in.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-index">04</span>
+          <div class="feature-line"></div>
+        </div>
+        <h3>Channel Adapters</h3>
+        <p>Telegram, CLI, and growing. One agent, every platform. Messages normalized before they hit the router. Adding a channel is one class.</p>
+      </div>
+    </section>
+
+    <!-- Code example -->
+    <section class="code-section">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="terminal-title">~/.kodo/persona.md</span>
+        </div>
+        <pre class="terminal-body"><code><span class="cm"># Your agent's personality is just a markdown file.</span>
+<span class="cm"># Edit it. Make it yours.</span>
+
+You are a senior engineering advisor. You give direct,
+concise answers. You push back on bad ideas. You never
+hallucinate — if you don't know, you say so.
+
+When idle, monitor Telegram for messages from the team.
+Summarize anything I missed if more than 5 accumulate.
+
+<span class="cm"># That's it. No code. No config. Just words.</span></code></pre>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="footer-logo">鼓動</span>
+          <span class="footer-meaning">kodo &mdash; heartbeat</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/apiguy/kodo">Source</a>
+          <a href="https://github.com/apiguy/kodo/blob/main/ARCHITECTURE.md">Architecture</a>
+          <a href="https://github.com/apiguy/kodo/blob/main/LICENSE">MIT License</a>
+        </div>
+      </div>
+      <div class="footer-copy">&copy; 2025 Freedom Dumlao</div>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
