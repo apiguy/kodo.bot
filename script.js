@@ -6,7 +6,8 @@
   'use strict';
 
   // ---- Configuration ----
-  const HEARTBEAT_MS = 2800;
+  const HEARTBEAT_MIN = 3500;
+  const HEARTBEAT_MAX = 7000;
   const JAPANESE = '鼓動';
   const ENGLISH = 'Kodo';
 
@@ -14,47 +15,70 @@
   const container = document.getElementById('glitch-container');
   const mainText = document.getElementById('glitch-main');
   const layers = container.querySelectorAll('.glitch-layer');
-  let showingJapanese = true;
 
-  function setAllText(text) {
-    mainText.textContent = text;
-    layers.forEach(l => (l.textContent = text));
+  function setEnglish() {
+    mainText.textContent = ENGLISH;
+    mainText.style.fontFamily = "var(--font-display)";
+    mainText.style.letterSpacing = "0.04em";
+    layers.forEach(l => {
+      l.textContent = ENGLISH;
+      l.style.fontFamily = "var(--font-display)";
+      l.style.letterSpacing = "0.04em";
+    });
   }
 
+  function setJapanese() {
+    mainText.textContent = JAPANESE;
+    mainText.style.fontFamily = "";
+    mainText.style.letterSpacing = "";
+    layers.forEach(l => {
+      l.textContent = JAPANESE;
+      l.style.fontFamily = "";
+      l.style.letterSpacing = "";
+    });
+  }
+
+  // Start on English
+  setEnglish();
+
   function glitchBeat() {
-    // Phase 1: rapid micro-glitches
-    const microCount = 3 + Math.floor(Math.random() * 3);
+    // Phase 1: micro-glitches while still on English
+    const microCount = 1 + Math.floor(Math.random() * 3);
     let i = 0;
 
     function microGlitch() {
       if (i >= microCount) {
-        // Phase 2: hard glitch + swap text
+        // Phase 2: hard glitch — flash to Japanese
         container.classList.remove('glitching');
         container.classList.add('glitching-hard');
+        setJapanese();
 
-        showingJapanese = !showingJapanese;
-        setAllText(showingJapanese ? JAPANESE : ENGLISH);
-
-        // If showing English, switch font
-        if (!showingJapanese) {
-          mainText.style.fontFamily = "var(--font-display)";
-          mainText.style.letterSpacing = "0.04em";
-          layers.forEach(l => {
-            l.style.fontFamily = "var(--font-display)";
-            l.style.letterSpacing = "0.04em";
-          });
-        } else {
-          mainText.style.fontFamily = "";
-          mainText.style.letterSpacing = "";
-          layers.forEach(l => {
-            l.style.fontFamily = "";
-            l.style.letterSpacing = "";
-          });
-        }
+        const holdTime = 120 + Math.random() * 150;
 
         setTimeout(() => {
           container.classList.remove('glitching-hard');
-        }, 120);
+
+          // Maybe bounce — flicker back to English then Japanese again
+          if (Math.random() < 0.5) {
+            bounce(1 + Math.floor(Math.random() * 2), () => {
+              // Final return to English
+              container.classList.add('glitching');
+              setTimeout(() => {
+                setEnglish();
+                container.classList.remove('glitching');
+                scheduleNext();
+              }, 50 + Math.random() * 40);
+            });
+          } else {
+            // Clean return
+            container.classList.add('glitching');
+            setTimeout(() => {
+              setEnglish();
+              container.classList.remove('glitching');
+              scheduleNext();
+            }, 60 + Math.random() * 40);
+          }
+        }, holdTime);
 
         return;
       }
@@ -65,17 +89,43 @@
         setTimeout(() => {
           i++;
           microGlitch();
-        }, 30 + Math.random() * 40);
-      }, 40 + Math.random() * 60);
+        }, 20 + Math.random() * 40);
+      }, 30 + Math.random() * 50);
     }
 
     microGlitch();
   }
 
-  // Start heartbeat loop
-  setInterval(glitchBeat, HEARTBEAT_MS);
-  // First beat after short delay
-  setTimeout(glitchBeat, 1200);
+  // Bounce: flicker English→Japanese a few times before settling
+  function bounce(count, done) {
+    if (count <= 0) { done(); return; }
+
+    // Brief flash to English
+    container.classList.add('glitching');
+    setEnglish();
+    const englishFlash = 40 + Math.random() * 60;
+
+    setTimeout(() => {
+      // Back to Japanese, hold a bit longer
+      setJapanese();
+      container.classList.remove('glitching');
+      container.classList.add('glitching-hard');
+      const japaneseHold = 80 + Math.random() * 120;
+
+      setTimeout(() => {
+        container.classList.remove('glitching-hard');
+        bounce(count - 1, done);
+      }, japaneseHold);
+    }, englishFlash);
+  }
+
+  function scheduleNext() {
+    const delay = HEARTBEAT_MIN + Math.random() * (HEARTBEAT_MAX - HEARTBEAT_MIN);
+    setTimeout(glitchBeat, delay);
+  }
+
+  // First beat after short delay, then irregular timing
+  setTimeout(glitchBeat, 2000);
 
   // ---- Background Grid Canvas ----
   const canvas = document.getElementById('grid-bg');
